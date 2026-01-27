@@ -10,14 +10,14 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Next.js frontend
-    credentials: true, // VERY IMPORTANT
+    origin: process.env.FRONTEND_URL ,
+    credentials: true,
   });
 
   // ✅ Use Better Auth with Node adapter
   app.use('/api/auth', toNodeHandler(auth));
 
   await app.listen(3001, '0.0.0.0');
-  console.log('Server running on http://localhost:3001');
+  console.log('Server running ');
 }
 bootstrap();
