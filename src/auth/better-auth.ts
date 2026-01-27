@@ -12,10 +12,8 @@ export const auth: Auth = betterAuth({
     enabled: true,
   },
   trustedOrigins: [process.env.FRONTEND_URL!],
-  cookies: {
-    session: {
-      sameSite: "none",   
-      secure: true,       
-    },
+   cookies: {
+    sameSite: "none",
+    secure: true,
   },
 }) as Auth;
