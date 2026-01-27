@@ -17,31 +17,39 @@ async function bootstrap() {
   // ✅ Better Auth
   app.use('/api/auth', toNodeHandler(auth));
 
-  // ✅ FORCE SameSite=None for BetterAuth session cookie (cross-domain)
-  app.use((req: any, res: any, next: any) => {
-    const setCookie = res.getHeader?.('set-cookie');
-    if (!setCookie) return next();
+app.use("/api/auth", (req: any, res: any, next: any) => {
+  try {
+    const originalSetHeader = res.setHeader.bind(res);
 
-    const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
+    res.setHeader = (name: string, value: any) => {
+      // intercept only Set-Cookie
+      if (name.toLowerCase() === "set-cookie") {
+        const cookies = Array.isArray(value) ? value : [value];
 
-    const rewritten = cookies.map((c: any) => {
-      if (typeof c !== 'string') return c;
+        const rewritten = cookies.map((c: any) => {
+          if (typeof c !== "string") return c;
+          if (!c.includes("better-auth.session_token")) return c;
 
-      // only touch BetterAuth cookie
-      if (!c.includes('better-auth.session_token')) return c;
+          let updated = c.replace(/SameSite=Lax/i, "SameSite=None");
+          updated = updated.replace(/SameSite=Strict/i, "SameSite=None");
 
-      let updated = c.replace(/SameSite=Lax/i, 'SameSite=None');
-      updated = updated.replace(/SameSite=Strict/i, 'SameSite=None');
+          if (!/;\s*Secure/i.test(updated)) updated += "; Secure";
+          return updated;
+        });
 
-      // SameSite=None requires Secure
-      if (!/;\s*Secure/i.test(updated)) updated += '; Secure';
+        return originalSetHeader(name, rewritten);
+      }
 
-      return updated;
-    });
+      return originalSetHeader(name, value);
+    };
 
-    res.setHeader('set-cookie', rewritten);
     next();
-  });
+  } catch (e) {
+    // never crash the server
+    next();
+  }
+});
+
 
   await app.listen(process.env.PORT || 3001, '0.0.0.0');
   console.log('Server running');
