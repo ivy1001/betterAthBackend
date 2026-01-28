@@ -5,15 +5,21 @@ const db = new Database("./auth.db");
 
 export const auth = betterAuth({
   baseURL: process.env.BACKEND_URL || "http://localhost:3001",
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET!,
   database: db as any,
-  emailAndPassword: {
-    enabled: true,
-  },
-  trustedOrigins: [
-    process.env.FRONTEND_URL || "http://localhost:3000",
-  ],
+
+  emailAndPassword: { enabled: true },
+
+  trustedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"],
+
   advanced: {
-    useSecureCookies: true,
+    cookies: {
+      sessionToken: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+        },
+      },
+    },
   },
 });
