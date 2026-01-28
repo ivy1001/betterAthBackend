@@ -104,11 +104,15 @@ await app.listen(process.env.PORT || 3001, "0.0.0.0");
 ```
 
 ### Database Persistence
-SQLite files are ephemeral on Railway unless a volume is attached.
-For production stability, consider:
+The project uses SQLite for local development.
 
-- Railway Volume for SQLite, or
-- Switching to Postgres (recommended)
+- Data is stored in a local auth.db file
+
+- No external database setup is required
+
+- This keeps the project easy to run and review locally
+
+This setup is enough for demonstrating authentication, session handling, and protected routes.
 
 ---
 
