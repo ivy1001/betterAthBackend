@@ -5,7 +5,7 @@ const db = new Database("./auth.db");
 
 export const auth = betterAuth({
   baseURL: process.env.BACKEND_URL || "http://localhost:3001",
-  secret: process.env.BETTER_AUTH_SECRET || "SUPER_SECRET_KEY",
+  secret: process.env.BETTER_AUTH_SECRET,
   database: db as any,
   emailAndPassword: {
     enabled: true,
