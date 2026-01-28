@@ -10,17 +10,14 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: process.env.FRONTEND_URL ,
     credentials: true,
   });
 
   // ✅ Use Better Auth with Node adapter
   app.use('/api/auth', toNodeHandler(auth));
 
-  const port = Number(process.env.PORT) || 3001;
-  await app.listen(port, "0.0.0.0");
-
-  console.log(`✅ Server running on http://localhost:${port}`);
-
+  await app.listen(3001, '0.0.0.0');
+  console.log('Server running on http://localhost:3001');
 }
 bootstrap();
