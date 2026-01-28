@@ -14,6 +14,6 @@ export const auth = betterAuth({
     process.env.FRONTEND_URL || "http://localhost:3000",
   ],
   advanced: {
-    useSecureCookies: true, // This enables SameSite=None in production
+    useSecureCookies: true,
   },
 });

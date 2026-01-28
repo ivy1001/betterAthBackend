@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
-import { auth } from './auth/better-auth.js';
+import { auth } from './auth/better-auth';
 import { toNodeHandler } from 'better-auth/node';
 
 async function bootstrap() {
