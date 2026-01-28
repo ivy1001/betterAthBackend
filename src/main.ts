@@ -10,14 +10,32 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL ,
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   });
 
-  // ✅ Use Better Auth with Node adapter
-  app.use('/api/auth', toNodeHandler(auth));
+  // ✅ Intercept Better Auth responses and fix cookies
+  app.use('/api/auth', (req, res, next) => {
+    const originalSetHeader = res.setHeader.bind(res);
+    
+    res.setHeader = function(name: string, value: any) {
+      if (name.toLowerCase() === 'set-cookie' && process.env.NODE_ENV === 'production') {
+        // Force SameSite=None for production
+        if (Array.isArray(value)) {
+          value = value.map(cookie => cookie.replace(/SameSite=Lax/gi, 'SameSite=None'));
+        } else if (typeof value === 'string') {
+          value = value.replace(/SameSite=Lax/gi, 'SameSite=None');
+        }
+      }
+      return originalSetHeader(name, value);
+    };
+    
+    next();
+  }, toNodeHandler(auth));
 
-  await app.listen(3001, '0.0.0.0');
-  console.log('Server running on http://localhost:3001');
+  const port = Number(process.env.PORT) || 3001;
+  await app.listen(port, "0.0.0.0");
+
+  console.log(`✅ Server running on port ${port}`);
 }
 bootstrap();
