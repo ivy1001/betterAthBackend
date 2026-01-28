@@ -5,8 +5,7 @@ const db = new Database("./auth.db");
 
 export const auth = betterAuth({
   baseURL: process.env.BACKEND_URL || "http://localhost:3001",
-  basePath: "/api/auth",
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET || "SUPER_SECRET_KEY",
   database: db as any,
   emailAndPassword: {
     enabled: true,
@@ -14,8 +13,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.FRONTEND_URL || "http://localhost:3000",
   ],
-  // ✅ Force secure cookies in production
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: true, // This enables SameSite=None in production
   },
 });
